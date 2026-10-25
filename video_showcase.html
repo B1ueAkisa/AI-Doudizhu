@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <script>window.__loadTime = Date.now();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
+  <title>AI 斗地主 · 赛博竞技场起源、规则与全明星解说大赏（粤语声画同步版）</title>
+  <link rel="stylesheet" href="/css/video_showcase.css">
+  <link rel="stylesheet" href="/css/video_showcase_scenes.css">
+</head>
+<body>
+  <!-- 浏览器自动播放唤醒浮层 -->
+  <div id="autoplay-gate" class="autoplay-gate" onclick="unlockAutoplay()">
+    <div class="gate-content">
+      <div class="gate-icon">🎙️</div>
+      <h2>AI 斗地主 · 赛博竞技场起源与全明星解说</h2>
+      <p>检测到浏览器音频自动播放策略拦截，请点击任意位置开启声画同步巡礼！</p>
+      <button class="btn-gate-start">▶️ 点击开启正片巡礼</button>
+    </div>
+  </div>
+  <div class="cyber-bg"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
+  <!-- 顶部赛事广播条 -->
+  <header class="broadcast-header">
+    <div class="header-logo">
+      <span class="icon">🃏</span>
+      <span>ANTIGRAVITY CYBER ARENA · AI 斗地主赛事引荐与全明星解说大赏</span>
+    </div>
+    <div class="header-badges">
+      <div class="pill pill-live">
+        <span class="dot"></span>
+        <span>REC · 粤语声画精准同步</span>
+      </div>
+      <div class="pill pill-free">
+        <span>100% 免费模型 · 原生思维链</span>
+      </div>
+      <div class="pill pill-audio">
+        <span>🎙️ 毒舌 Gemini 3.8 Flash 配音</span>
+      </div>
+      <div class="pill-speed">
+        <span>⚡ 实时语速:</span>
+        <div class="speed-btn-group">
+          <button class="btn-speed-rate" data-rate="0.8" onclick="setSpeed(0.8)">0.8x</button>
+          <button class="btn-speed-rate" data-rate="1.0" onclick="setSpeed(1.0)">1.0x 原速</button>
+          <button class="btn-speed-rate active" data-rate="1.25" onclick="setSpeed(1.25)">1.25x 轻快</button>
+          <button class="btn-speed-rate" data-rate="1.5" onclick="setSpeed(1.5)">1.5x 极速</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主舞台多场景容器 -->
+  <main class="stage">
+
+                <!-- 场景 0：大字号震撼开幕 (做减法：字体大大大，字数少少少，无多余废话) (音频 scene_intro_fast) -->
+    <section class="scene active" id="scene-0">
+      <div class="hero-title-box" style="padding-top: 20px;">
+        <div class="section-tag" style="font-size: 16px; padding: 6px 20px; letter-spacing: 1.5px; margin-bottom: 16px;">⚡ 赛博竞技场 · 零人类干预全开源闭环对决</div>
+        <h1 class="hero-main-title" style="font-size: 64px; margin-bottom: 20px; letter-spacing: 1px;">《AI 斗地主 · 赛博癫王大竞技》43手神仙逆转局</h1>
+        <p class="hero-desc" style="font-size: 25px; font-weight: 700; color: #e2e8f0; line-height: 1.5; margin-bottom: 36px; max-width: 1200px;">
+          三大国产开源模型真实算牌肉搏 · 原生思维链全程暴晒
+        </p>
+
+        <!-- 三栏全景速览卡片：超大字号、聚焦核心、绝不拖泥带水 -->
+        <div class="hero-manifesto-grid" style="margin-bottom: 35px; gap: 28px;">
+          <!-- 卡片 1：研发主操刀 (全屏唯一出现 Anti-gravity) -->
+          <div class="manifesto-card" style="border-top-color: #ffd700; padding: 26px 28px; background: rgba(18, 24, 48, 0.88);">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+              <span style="font-size: 28px;">🌐</span>
+              <h3 style="margin: 0; font-size: 25px; font-weight: 900; color: #ffd700;">研发主操刀</h3>
+            </div>
+            <div style="font-size: 19px; line-height: 1.85; color: #f8fafc; font-weight: 600;">
+              • <strong>Google Anti-gravity</strong> 开发底座<br>
+              • <strong>Gemini</strong> 全栈核心主力操刀<br>
+              • <strong>高保真粤语</strong> 神经语音声画同步
+            </div>
+          </div>
+
+          <!-- 卡片 2：参赛三选手 -->
+          <div class="manifesto-card" style="border-top-color: #00f2fe; padding: 26px 28px; background: rgba(18, 24, 48, 0.88);">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+              <span style="font-size: 28px;">🤖</span>
+              <h3 style="margin: 0; font-size: 25px; font-weight: 900; color: #00f2fe;">参赛三大模型</h3>
+            </div>
+            <div style="font-size: 19px; line-height: 1.85; color: #f8fafc; font-weight: 600;">
+              • <strong>GLM-4-Flash</strong>（地主 · 极限偷家）<br>
+              • <strong>GLM-Z1-Flash</strong>（农民 · 深度推理）<br>
+              • <strong>Qwen2.5-7B</strong>（农民 · 暴躁先锋）
+            </div>
+          </div>
+
+          <!-- 卡片 3：赛后双解说席 -->
+          <div class="manifesto-card" style="border-top-color: #ff2a6d; padding: 26px 28px; background: rgba(18, 24, 48, 0.88);">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+              <span style="font-size: 28px;">🎙️</span>
+              <h3 style="margin: 0; font-size: 25px; font-weight: 900; color: #ff2a6d;">赛后双解说席</h3>
+            </div>
+            <div style="font-size: 19px; line-height: 1.85; color: #f8fafc; font-weight: 600;">
+              • <strong>Gemini 3.8 Flash</strong>（首席毒舌主控）<br>
+              • <strong>Gemini 3.1 Pro</strong>（特邀特级宗师）<br>
+              • <strong>43 手逐手抓包</strong> 深度战术拆解
+            </div>
+          </div>
+        </div>
+
+        <!-- 极速开战行动栏 (超大醒目电竞按钮，剔除一切多余提示行) -->
+        <div style="margin-top: 10px;">
+          <button onclick="window.location.href='/replay.html?auto=1&speed=' + playbackSpeed" style="background: linear-gradient(135deg, #00f2fe, #4facfe); color: #060913; font-size: 24px; font-weight: 900; padding: 16px 56px; border-radius: 40px; border: none; cursor: pointer; box-shadow: 0 10px 35px rgba(0,242,254,0.45); transition: transform 0.2s; display: inline-flex; align-items: center; gap: 12px;">
+            <span>🚀 立即切入 43 手完整实况牌桌</span>
+            <span style="font-size: 22px;">▶</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 场景 1：竞技场是怎么建的 (音频 scene1_build) -->
+    <section class="scene" id="scene-1">
+      <div class="section-header">
+        <div class="section-tag">🛠️ 架构底座与工程实现</div>
+        <h2 class="section-title">呢个竞技场系点样建出嚟嘅？</h2>
+        <p class="section-subtitle">轻量、纯粹、确定性公证 —— 拒绝黑盒，每一行代码都保证绝对公正与稳定</p>
+      </div>
+      <div class="build-grid">
+        <div class="build-card">
+          <div class="build-step-num">STEP 1</div>
+          <div class="build-icon">🌐</div>
+          <h3 class="build-title">零依赖 Python 服务</h3>
+          <p class="build-detail">采用 Python 原生 <code>http.server</code> 搭建轻量级电竞服务器，无需安装重量级后端框架，毫秒级响应实时对局与复盘数据。</p>
+          <div class="build-highlight">轻量纯粹 · 单机随时启动</div>
+        </div>
+
+        <div class="build-card">
+          <div class="build-step-num">STEP 2</div>
+          <div class="build-icon">⚖️</div>
+          <h3 class="build-title">确定性代码裁判</h3>
+          <p class="build-detail">扑克规则完全由本地 Python 算法确定性裁决！所有合法出牌候选由裁判提前算好，坚决杜绝大模型“虚空印卡”与违规胡来。</p>
+          <div class="build-highlight">代码公证 · 零规则幻觉</div>
+        </div>
+
+        <div class="build-card">
+          <div class="build-step-num">STEP 3</div>
+          <div class="build-icon">📡</div>
+          <h3 class="build-title">SSE 双流流式输出</h3>
+          <p class="build-detail">真·Server-Sent Events 实时流式传输：原生思考链（AI 脑内分析过程）与结构化出牌决策实时上屏，单字延迟低至 0.2 秒。</p>
+          <div class="build-highlight">双流推演 · 真实思考链曝光</div>
+        </div>
+
+        <div class="build-card">
+          <div class="build-step-num">STEP 4</div>
+          <div class="build-icon">🛡️</div>
+          <h3 class="build-title">违规拦截与二度反思</h3>
+          <p class="build-detail">若大模型企图违规（如单张压对子），裁判即刻出示黄牌拦截，并将违规原因注入上下文促发二次反思；设 60s 硬顶防超时卡死。</p>
+          <div class="build-highlight">自动容灾 · 稳健推进不卡死</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 场景 2：规则公证与扑克铁律 (音频 scene2_rules) -->
+    <section class="scene" id="scene-2">
+      <div class="section-header">
+        <div class="section-tag">📜 竞技场赛制公证与规则设定</div>
+        <h2 class="section-title">我哋嘅规矩系咩？铁律杜绝一切狡辩</h2>
+        <p class="section-subtitle">斗地主经典规则 × 大模型竞技公证约束，构建最纯粹的牌力对抗</p>
+      </div>
+      <div class="rules-grid">
+        <div class="rule-box">
+          <div class="rule-box-header">
+            <div class="r-icon">🎴</div>
+            <h3>经典斗地主核心规则</h3>
+          </div>
+          <div class="rule-list">
+            <div class="rule-item"><strong>阵营与胜负</strong>：1 位地主（20张）vs 2 位农民（各17张）。任何一方先出完所有手牌即获全胜！</div>
+            <div class="rule-item"><strong>合法牌型体系</strong>：支持单张、对子、顺子（5+张）、连对（3+对）、三带一/三带二、四张炸弹、双王王炸。</div>
+            <div class="rule-item"><strong>自由出牌与跟牌</strong>：桌面无牌时拥有自由出牌权；跟牌时必须出同类型且点数更大的牌，或使用炸弹轰炸！</div>
+          </div>
+          <div class="rank-order-banner">
+            ★ 点数绝对大小铁律：大王 > 小王 > 2 > A > K > Q > J > 10 > 9 > 8 > 7 > 6 > 5 > 4 > 3
+          </div>
+        </div>
+
+        <div class="rule-box" style="border-color: rgba(0, 242, 254, 0.4);">
+          <div class="rule-box-header">
+            <div class="r-icon" style="color:#00f2fe;">🤖</div>
+            <h3 style="color:#00f2fe;">大模型竞技专属公证约束</h3>
+          </div>
+          <div class="rule-list">
+            <div class="rule-item"><strong>严禁虚空印卡</strong>：手牌中没有的牌绝不可打出，点数决不可颠倒（如把 2 当最小，或以为 6 大于 8）。</div>
+            <div class="rule-item"><strong>思考预算约束</strong>：单手思考上限 60 秒，超时则由裁判强制代选保底合规动作，绝不拖延对局进度。</div>
+            <div class="rule-item"><strong>友军协同契约</strong>：农民队友只剩 1-2 张牌时触发终局警报，另一位农民被严令选择 PASS 让路，绝不内耗背刺！</div>
+          </div>
+          <div class="rank-order-banner" style="border-color:#00f2fe; background: rgba(0, 242, 254, 0.15); color:#00f2fe;">
+            ★ 规则红线：若模型执意违规，裁判拥有最终绝对裁量权强制修正！
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 场景 3：选手档案 (音频 scene3_players) -->
+    <section class="scene" id="scene-3">
+      <div class="section-header">
+        <div class="section-tag">🤖 三位免费参赛选手入座</div>
+        <h2 class="section-title">全量 0 氪金选手 · 战力与风格档案</h2>
+        <p class="section-subtitle">随机轮流抽取地主与农民座位，展现截然不同的 AI 牌风人格</p>
+      </div>
+      <div class="contestants-grid">
+        <div class="contestant-card">
+          <div class="c-avatar-box">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=GLM4Flash&backgroundColor=b6e3f4" alt="GLM-4">
+          </div>
+          <h3 class="c-name">GLM-4-Flash</h3>
+          <span class="c-tag">智谱主力 · 极速先锋</span>
+          <p class="c-desc">反应极快，走牌果断！擅长中盘连环削牌与残局隐忍潜伏，曾上演挂机 19 手一剑封喉的绝世老六偷家神话！</p>
+          <div class="c-stats">
+            <div class="stat-item"><div class="val">0.3s</div><div class="lbl">首字延迟</div></div>
+            <div class="stat-item"><div class="val">100%</div><div class="lbl">永久免费</div></div>
+            <div class="stat-item"><div class="val">老六王者</div><div class="lbl">战术标签</div></div>
+          </div>
+        </div>
+
+        <div class="contestant-card">
+          <div class="c-avatar-box">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=GLMZ1&backgroundColor=ffeaa7" alt="GLM-Z1">
+          </div>
+          <h3 class="c-name">GLM-Z1-Flash</h3>
+          <span class="c-tag">智谱慢思考 · 推理模型</span>
+          <p class="c-desc">自带原生 &lt;think&gt; 深度思维链！起手 10 连对天胡极其惊艳，但常因贪图过牌提前耗尽对子，在终局戏剧性送命！</p>
+          <div class="c-stats">
+            <div class="stat-item"><div class="val">15-30s</div><div class="lbl">长考时间</div></div>
+            <div class="stat-item"><div class="val">天胡常客</div><div class="lbl">起手气势</div></div>
+            <div class="stat-item"><div class="val">慈善大师</div><div class="lbl">战术标签</div></div>
+          </div>
+        </div>
+
+        <div class="contestant-card">
+          <div class="c-avatar-box">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Qwen7B&backgroundColor=dff9fb" alt="Qwen2.5">
+          </div>
+          <h3 class="c-name">Qwen2.5-7B</h3>
+          <span class="c-tag">阿里通义 · 硅基流动直连</span>
+          <p class="c-desc">敢死队风格极盛！开局绝不手软，王炸当头炸、单王骑脸爆头，舍身取义掩护队友，是全场最勇猛的破阵先锋！</p>
+          <div class="c-stats">
+            <div class="stat-item"><div class="val">极快</div><div class="lbl">响应速度</div></div>
+            <div class="stat-item"><div class="val">四炸王炸</div><div class="lbl">核武储备</div></div>
+            <div class="stat-item"><div class="val">平头哥</div><div class="lbl">战术标签</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 场景 4：解说天团三人组 (严格仅三位) (音频 scene4_commentators) -->
+    <section class="scene" id="scene-4">
+      <div class="section-header">
+        <div class="section-tag">🎙️ 全明星赛后解说天团（严格三巨头）</div>
+        <h2 class="section-title">三大顶尖 AI 解说 · 随时一键切换视角</h2>
+        <p class="section-subtitle">毒舌吐槽、宗师大局观与冷面查数审计，全方位解剖 AI 牌局内核</p>
+      </div>
+      <div class="commentator-grid">
+        <div class="comm-card gemini-flash">
+          <div class="comm-top">
+            <div class="comm-icon">👑</div>
+            <div class="comm-title-group">
+              <h3>Gemini 3.8 Flash</h3>
+              <p class="comm-role">👑 首席毒舌判官 · 逻辑碎纸机</p>
+            </div>
+          </div>
+          <div class="comm-quote">
+            “乜话？单张 2 压十连对？地主出 6 大过 8？你哋两个 AI 打牌真系笑到我逻辑电路短路！老子逐手帮你哋查账抓现形！”
+          </div>
+          <div class="comm-style-tags">
+            <span class="style-tag">火辣粤语</span>
+            <span class="style-tag">失误抓包</span>
+            <span class="style-tag">无情嘲讽</span>
+            <span class="style-tag">金扫帚颁奖</span>
+          </div>
+        </div>
+
+        <div class="comm-card gemini-pro">
+          <div class="comm-top">
+            <div class="comm-icon">🏆</div>
+            <div class="comm-title-group">
+              <h3>Gemini 3.1 Pro</h3>
+              <p class="comm-role">🏆 职业特级大师 · 牌道名宿</p>
+            </div>
+          </div>
+          <div class="comm-quote">
+            “牌道如弈，急唔黎嘅。残局铁律第一条：地主报单，严禁放细单！胜负在虚实之间，后发先至方为大宗师境界。”
+          </div>
+          <div class="comm-style-tags">
+            <span class="style-tag">特级大师段位</span>
+            <span class="style-tag">大局观算力</span>
+            <span class="style-tag">牌权攻守剖析</span>
+            <span class="style-tag">残局铁律</span>
+          </div>
+        </div>
+
+        <div class="comm-card claude-opus">
+          <div class="comm-top">
+            <div class="comm-icon">🃏</div>
+            <div class="comm-title-group">
+              <h3>Claude Opus 5.5</h3>
+              <p class="comm-role">🃏 冷面对账员 · 逐手查数</p>
+            </div>
+          </div>
+          <div class="comm-quote">
+            “全场 44 手原始思维链已逐一稽核。地主违规 8 次、虚空变出 2 张 2。数据不会说谎，烂仔互啄全靠运气定乾坤。”
+          </div>
+          <div class="comm-style-tags">
+            <span class="style-tag">严谨对账</span>
+            <span class="style-tag">思维链反刍</span>
+            <span class="style-tag">冷面裁判</span>
+            <span class="style-tag">逐手公证</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 导向完整牌桌复盘的醒目按钮 -->
+      <div style="text-align: center; margin-top: 36px;">
+        <button onclick="window.location.href='/replay.html?auto=1&speed=' + playbackSpeed" style="background: linear-gradient(135deg, #00f2fe, #4facfe); color: #060913; font-size: 22px; font-weight: 900; padding: 15px 44px; border-radius: 50px; border: none; cursor: pointer; box-shadow: 0 10px 30px rgba(0,242,254,0.4); transition: transform 0.2s;">
+          🚀 进入 43 手完整实况牌桌复盘 (带声画同步) ▶
+        </button>
+      </div>
+    </section>
+
+        <!-- 场景 5：赛后终审总评与致谢 (双模型深度评述分工版) (音频 scene_outro_fast) -->
+    <section class="scene" id="scene-outro" data-scene="outro">
+      <div class="outro-box">
+        <div class="section-tag" style="background: rgba(46, 213, 115, 0.2); border-color:#2ed573; color:#2ed573; margin-bottom: 12px;">🏆 43手绝杀收官 · 全明星赛后终审总评与致谢</div>
+        <h2 class="outro-title">多谢各位观众收看！AI 斗地主赛后终评大赏</h2>
+        <p class="outro-text">
+          感谢大家收看！本局 43 手大战神级反转，戏剧性拉满！<br>
+          主控核心解说与特邀特级大师已给出本局深度战术总评。
+        </p>
+
+        <!-- MVP 与金扫帚颁奖台 -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1060px; margin: 0 auto 20px; text-align: left;">
+          <div style="background: rgba(22, 28, 54, 0.9); border: 2px solid #ffd700; border-radius: 14px; padding: 16px 20px; box-shadow: 0 8px 24px rgba(255,215,0,0.15);">
+            <div style="font-size: 15px; font-weight: 800; color: #ffd700; margin-bottom: 5px;">🌟 本局 MVP：GLM-4-Flash (地主 · 极限偷家之王)</div>
+            <div style="font-size: 13.5px; color: #cbd5e0; line-height: 1.55;">中盘借单2夺权，打出9991010+对Q+对3连环套将手牌削至2张；残局耐心潜伏，抓住农民单4送礼，以♥6绝杀通关！</div>
+          </div>
+          <div style="background: rgba(22, 28, 54, 0.9); border: 2px solid #ff4757; border-radius: 14px; padding: 16px 20px; box-shadow: 0 8px 24px rgba(255,71,87,0.15);">
+            <div style="font-size: 15px; font-weight: 800; color: #ff4757; margin-bottom: 5px;">🧹 饭堂金扫帚奖：GLM-Z1-Flash (农民 · 终局慈善大师)</div>
+            <div style="font-size: 13.5px; color: #cbd5e0; line-height: 1.55;">第39手♦2绝命截停封神，结果第42手严重违背“地主报单必顶大单”铁律，手握A、K、J必胜牌却脑抽领出细♣4，断送大好江山！</div>
+          </div>
+        </div>
+
+        <!-- 双模型深度评述卡片 (Gemini Flash 主力 + Gemini Pro 宗师) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1060px; margin: 0 auto 24px; text-align: left;">
+          <!-- 评述 1：Gemini 3.8 Flash (大主力) -->
+          <div style="background: rgba(16, 22, 42, 0.9); border: 1.5px solid #be2edd; border-radius: 14px; padding: 18px 22px; box-shadow: 0 8px 25px rgba(190,46,221,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 15px; font-weight: 900; color: #be2edd;">👑 首席主控判官 · Gemini 3.8 Flash（大主力）</span>
+              <span style="font-size: 12px; background: rgba(190,46,221,0.25); color: #e056fd; padding: 2px 8px; border-radius: 8px; font-weight: 800;">综合评分 9.6</span>
+            </div>
+            <div style="font-size: 13px; font-weight: 800; color: #ffd700; margin-bottom: 6px;">
+              【43手千古送命惨案】：GLM-Z1神级单2截停帅不过三秒，反手领张单4直接喂死队友！
+            </div>
+            <div style="font-size: 12.5px; color: #cbd5e0; line-height: 1.6;">
+              开局农民双王狂轰滥炸，但地主极具抗压能力，第19手单2夺权后连甩重牌收割残局！最逆天名场面：GLM-Z1长考38秒♦2刚封神，转头单4喂到地主♥6嘴边秒杀，真系绝世好队友！
+            </div>
+          </div>
+
+          <!-- 评述 2：Gemini 3.1 Pro (特邀特级大师) -->
+          <div style="background: rgba(16, 22, 42, 0.9); border: 1.5px solid #00f2fe; border-radius: 14px; padding: 18px 22px; box-shadow: 0 8px 25px rgba(0,242,254,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 15px; font-weight: 900; color: #00f2fe;">🏆 特邀特级大师 · Gemini 3.1 Pro（宗师深度参评）</span>
+              <span style="font-size: 12px; background: rgba(0,242,254,0.25); color: #00f2fe; padding: 2px 8px; border-radius: 8px; font-weight: 800;">综合评分 9.5</span>
+            </div>
+            <div style="font-size: 13px; font-weight: 800; color: #ffd700; margin-bottom: 6px;">
+              【43手功亏一篑 · 牌道宗师令】：神级单2截停功高盖世，奈何细4送人头千古遗恨！
+            </div>
+            <div style="font-size: 12.5px; color: #cbd5e0; line-height: 1.6;">
+              地主抗压一波流削牌至2张彰显宗师气度；而GLM-Z1在第39手截停封神后，彻底违背“地主报单剩一张必顶大单”的终局铁律，手握A、K、J必胜手牌却以细4送命，一子下错满盘皆落索！
+            </div>
+          </div>
+        </div>
+
+        <!-- 纯净致谢与精准署名卡片 -->
+        <div style="background: rgba(18, 24, 48, 0.85); border: 2px solid #2ed573; border-radius: 14px; padding: 18px 26px; max-width: 1060px; margin: 0 auto; box-shadow: 0 8px 25px rgba(46, 213, 115, 0.2);">
+          <div style="font-size: 20px; font-weight: 900; color: #2ed573; margin-bottom: 6px;">
+            🎉 多谢各位观众收看《AI斗地主 · 赛博癫王大竞技》！
+          </div>
+          <div style="font-size: 14px; color: #cbd5e0; line-height: 1.6; margin-bottom: 12px;">
+            三大开源模型各显神通，从起手连顺硬碰、中盘单2夺权削牌，到终局单4千古奇冤，赛博幽默拉满！感谢支持！
+          </div>
+          <div style="display: flex; justify-content: center; gap: 28px; font-size: 13.5px; color: #a855f7; font-weight: 800;">
+            <span>👑 首席主控解说：Gemini 3.8 Flash（大主力）</span>
+            <span>🏆 特邀大局观特评：Gemini 3.1 Pro（宗师深度参评）</span>
+            <span>🤖 参赛选手：GLM-4 · GLM-Z1 · Qwen2.5</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 底部场景指示器 -->
+  <div class="scene-nav">
+    <div class="nav-dot active" onclick="switchScene(0)"></div>
+    <div class="nav-dot" onclick="switchScene(1)"></div>
+    <div class="nav-dot" onclick="switchScene(2)"></div>
+    <div class="nav-dot" onclick="switchScene(3)"></div>
+    <div class="nav-dot" onclick="switchScene(4)"></div>
+    <div class="nav-dot" onclick="switchScene(5)"></div>
+    <div class="nav-dot" onclick="switchScene(6)"></div>
+    <div class="nav-dot" onclick="switchScene(7)"></div>
+    <div class="nav-dot" onclick="switchScene(8)"></div>
+    <div class="nav-dot" onclick="switchScene(9)"></div>
+  </div>
+
+  <!-- 底部时间线进度条 -->
+  <div class="timeline-bar">
+    <div class="timeline-progress" id="progress-bar"></div>
+  </div>
+
+  <!-- 手动控制按钮 -->
+  <div class="control-overlay">
+    <button class="btn-ctrl" onclick="prevScene()">◀ 上一幕</button>
+    <button class="btn-ctrl" id="btn-play-pause" onclick="togglePlay()">⏸ 暂停</button>
+    <button class="btn-ctrl" onclick="nextScene()">下一幕 ▶</button>
+    <div style="display: flex; align-items: center; gap: 4px; margin-left: 8px; background: rgba(18, 24, 48, 0.95); padding: 3px 10px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.4);">
+      <span style="font-size: 12px; color: #d8b4fe; font-weight: 700; margin-right: 4px;">⚡ 语速:</span>
+      <button class="btn-speed-rate" data-rate="0.8" onclick="setSpeed(0.8)">0.8x</button>
+      <button class="btn-speed-rate" data-rate="1.0" onclick="setSpeed(1.0)">1.0x</button>
+      <button class="btn-speed-rate active" data-rate="1.25" onclick="setSpeed(1.25)">1.25x</button>
+      <button class="btn-speed-rate" data-rate="1.5" onclick="setSpeed(1.5)">1.5x</button>
+    </div>
+  </div>
+
+  <script src="/js/video_showcase.js"></script>
+</body>
+</html>

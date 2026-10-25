@@ -1,0 +1,579 @@
+:root {
+      --bg: #070a0e;
+      --felt: #0c3b21;
+      --felt-inner: #072715;
+      --gold: #fbc531;
+      --gold-bright: #ffdd59;
+      --gold-glow: rgba(251, 197, 49, 0.7);
+      --red: #eb2f06;
+      --black: #1e272e;
+      --border-dark: #2f3542;
+
+      /* 三席位辨识留色 */
+      --seat-0-color: #0984e3; /* 底部: 炫蓝 */
+      --seat-1-color: #00b894; /* 右方: 翡翠绿 */
+      --seat-2-color: #e17055; /* 左方: 暖橙 */
+
+      /* Gemini 毒舌专属紫 */
+      --purple-hud: #be2edd;
+      --purple-glow: rgba(190, 46, 221, 0.55);
+      --purple-border: #e056fd;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: #f5f6fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* 顶部导航控制 */
+    header {
+      background: rgba(15, 20, 28, 0.98);
+      border-bottom: 2px solid var(--border-dark);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+      z-index: 100;
+      height: 54px;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand h1 {
+      font-size: 18.5px;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .match-summary-pill {
+      background: #171f2a;
+      border: 1.5px solid #e056fd;
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 13px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 14px rgba(224, 86, 253, 0.3);
+    }
+
+    .header-btns {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button {
+      background: #44bd32;
+      color: #fff;
+      border: none;
+      padding: 6px 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    button:hover {
+      filter: brightness(1.2);
+      transform: translateY(-1px);
+    }
+
+    .btn-live { background: #0984e3; }
+    .btn-lib {
+      background: linear-gradient(135deg, #e056fd, #be2edd);
+      border: 1.5px solid #ffbe76;
+      box-shadow: 0 0 14px rgba(224, 86, 253, 0.4);
+    }
+
+    /* ============================================================
+       【主界面：电竞演播室双屏对称架构 (72% 牌桌 + 28% 演播台)】
+       彻底告别混乱挤压！牌桌 100% 对称清爽，解说席独立宽敞！
+       ============================================================ */
+    .studio-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      height: calc(100vh - 54px);
+    }
+
+    /* 左侧：赌场级大绿呢实木椭圆大牌桌 */
+    .table-wrapper {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .table-felt {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, #0d4225 0%, #082b18 65%, #03150b 100%);
+      border: 18px solid #2d1508;
+      box-shadow: inset 0 0 100px rgba(0,0,0,0.95), 0 8px 30px rgba(0,0,0,0.7);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    /* 3张公开底牌 */
+    .bottom-cards-bar {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      background: rgba(15, 20, 28, 0.94);
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      z-index: 25;
+    }
+
+    .bottom-cards-bar span {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--gold-bright);
+    }
+
+    /* 顶部中央领牌状态指示 */
+    .center-trick-badge {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.72);
+      border: 2px solid rgba(255,255,255,0.25);
+      border-radius: 14px;
+      padding: 6px 20px;
+      font-size: 14px;
+      font-weight: 900;
+      color: #74b9ff;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      z-index: 25;
+      white-space: nowrap;
+    }
+
+    /* 顺时针流向动态环 */
+    .turn-flow-svg-wrap {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 440px;
+      height: 280px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .flow-svg-path {
+      stroke: var(--gold-bright);
+      stroke-width: 4;
+      stroke-dasharray: 12 8;
+      fill: none;
+      filter: drop-shadow(0 0 8px rgba(251, 197, 49, 0.85));
+      animation: flowDash 1.2s linear infinite;
+    }
+
+    @keyframes flowDash {
+      to { stroke-dashoffset: -40; }
+    }
+
+    .flow-label {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 20, 28, 0.9);
+      border: 1.5px solid var(--gold);
+      color: var(--gold-bright);
+      font-size: 12px;
+      font-weight: 900;
+      padding: 3px 14px;
+      border-radius: 14px;
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       三家席位 Pod 与叠牌排布 (绝对对称、绝对舒适)
+       ============================================================ */
+    .player-seat-block {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+    }
+
+    /* 席位 2 (左方 · 上家)：位于牌桌左上象限，向下平移彻底避开 3 张底牌 */
+    .seat-block-left {
+      top: 110px;
+      left: 28px;
+      width: 330px;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    /* 席位 1 (右方 · 下家)：位于牌桌右上象限，完美对称！ */
+    .seat-block-right {
+      top: 110px;
+      right: 28px;
+      width: 330px;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    /* 席位 0 (底部 · 主视角)：位于牌桌底端居中 */
+    .seat-block-bottom {
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 20;
+    }
+
+    /* 席位 0 独立思维链浮动区：置于牌桌左下方开阔绿呢，绝不重叠出牌区与手牌！ */
+    .seat-0-bubble-wrapper {
+      position: absolute;
+      left: 28px;
+      bottom: 25px;
+      width: 330px;
+      z-index: 35;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    /* 选手卡片 Pod */
+    .player-card {
+      background: #151c26;
+      border: 2px solid var(--border-dark);
+      border-radius: 14px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.55);
+      transition: all 0.3s;
+    }
+
+    .player-card.active-turn {
+      border-color: #ffdd59;
+      box-shadow: 0 0 25px rgba(255, 221, 89, 0.9);
+      transform: translateY(-2px);
+    }
+
+    .card-seat-0 { border-color: rgba(9, 132, 227, 0.6); }
+    .card-seat-1 { border-color: rgba(0, 184, 148, 0.6); }
+    .card-seat-2 { border-color: rgba(225, 112, 85, 0.6); }
+
+    .avatar-wrap { position: relative; }
+    .avatar-svg-box {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #1e272e;
+      border: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .avatar-svg-box svg { width: 100%; height: 100%; }
+
+    .role-badge {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      font-size: 12.5px;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 8px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+      white-space: nowrap;
+    }
+    .role-landlord {
+      background: linear-gradient(135deg, #eb2f06, #ff793f);
+      border: 1.5px solid #ffbe76;
+      box-shadow: 0 0 16px rgba(235, 47, 6, 0.8);
+      animation: pulseLandlord 2s infinite;
+    }
+    .role-peasant {
+      background: linear-gradient(135deg, #10ac84, #1dd1a1);
+      border: 1.5px solid #55efc4;
+      box-shadow: 0 0 10px rgba(16, 172, 132, 0.5);
+    }
+
+    @keyframes pulseLandlord {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 14px rgba(235, 47, 6, 0.7); }
+      50% { transform: scale(1.05); box-shadow: 0 0 22px rgba(255, 121, 63, 0.95); }
+    }
+
+    .player-card.is-landlord {
+      border: 2.5px solid #ff4757 !important;
+      box-shadow: 0 0 28px rgba(255, 71, 87, 0.5) !important;
+      background: linear-gradient(145deg, #241416 0%, #151c26 100%);
+    }
+    .player-card.is-peasant {
+      border: 2px solid #2ed573;
+    }
+
+    .role-pill-landlord {
+      font-size: 12px;
+      font-weight: 900;
+      color: #ffbe76;
+      background: rgba(235, 47, 6, 0.28);
+      border: 1.5px solid #eb2f06;
+      padding: 1px 7px;
+      border-radius: 5px;
+      margin-left: 6px;
+      box-shadow: 0 0 8px rgba(235, 47, 6, 0.4);
+    }
+
+    .role-pill-peasant {
+      font-size: 11.5px;
+      font-weight: 900;
+      color: #55efc4;
+      background: rgba(0, 184, 148, 0.22);
+      border: 1.5px solid #00b894;
+      padding: 1px 7px;
+      border-radius: 5px;
+      margin-left: 6px;
+    }
+
+    .seat-badge {
+      font-size: 11.5px;
+      font-weight: 900;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-left: 6px;
+      color: #fff;
+    }
+    .badge-seat-0 { background: var(--seat-0-color); }
+    .badge-seat-1 { background: var(--seat-1-color); }
+    .badge-seat-2 { background: var(--seat-2-color); }
+
+    .player-name {
+      font-size: 14.5px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .card-count-badge {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: var(--gold-bright);
+      margin-top: 2px;
+    }
+
+    /* ============================================================
+       【卡牌视觉规格：大号字体牌角叠牌】
+       ============================================================ */
+    .poker-card {
+      background: #ffffff;
+      border: 2px solid #dcdde1;
+      border-radius: 7px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-weight: 900;
+      box-shadow: -2px 2px 8px rgba(0,0,0,0.5);
+      user-select: none;
+      position: relative;
+      transition: transform 0.15s, z-index 0.15s;
+    }
+
+    .poker-card.red { color: var(--red); }
+    .poker-card.black { color: var(--black); }
+
+    .hand-cascade-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hand-cascade-row {
+      display: flex;
+      align-items: center;
+    }
+
+    /* 左右侧边玩家手牌 (64px x 90px, 负边距 -34px，露出 30px 饱满大牌角！) */
+    .card-side {
+      width: 64px;
+      height: 90px;
+      padding: 4px 6px;
+      margin-left: -34px;
+    }
+    .card-side:first-child { margin-left: 0; }
+    .card-side .card-top { font-size: 22px; line-height: 1; font-weight: 900; }
+    .card-side .card-suit { font-size: 26px; align-self: center; line-height: 1; }
+
+    /* 底部主视角手牌 (76px x 110px 超大号，负边距 -38px，露出 38px 大牌角！) */
+    .card-bottom {
+      width: 76px;
+      height: 110px;
+      padding: 5px 7px;
+      margin-left: -38px;
+    }
+    .card-bottom:first-child { margin-left: 0; }
+    .card-bottom .card-top { font-size: 28px; line-height: 1; font-weight: 900; }
+    .card-bottom .card-suit { font-size: 32px; align-self: center; line-height: 1; }
+
+    .poker-card:hover {
+      transform: translateY(-12px) scale(1.1);
+      z-index: 100 !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.75);
+    }
+
+    /* ============================================================
+       思维链气泡 (置于手牌下方开阔绿呢上，14px 粗体黑字，极度清晰！)
+       ============================================================ */
+    .thinking-bubble-box {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .blunder-comic-tag {
+      background: #eb2f06;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 3px 12px;
+      border-radius: 12px;
+      box-shadow: 0 0 18px rgba(235, 47, 6, 0.95);
+      animation: bounceAlert 0.8s infinite alternate;
+      align-self: flex-start;
+      white-space: nowrap;
+    }
+
+    @keyframes bounceAlert {
+      from { transform: translateY(0); }
+      to { transform: translateY(-4px); }
+    }
+
+    .thinking-clock-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 900;
+      color: #ffa502;
+      background: rgba(255, 165, 2, 0.15);
+      border: 1px solid rgba(255, 165, 2, 0.4);
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-bottom: 4px;
+      animation: pulseClock 1.5s infinite;
+    }
+
+    @keyframes pulseClock {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(0.97); }
+    }
+
+    .thinking-bubble {
+      background: rgba(255, 255, 255, 0.98);
+      color: #1e272e;
+      border-radius: 14px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.55;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      position: relative;
+      border-left: 6px solid #3742fa;
+      transition: all 0.3s;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .bubble-seat-0 { border-left-color: var(--seat-0-color); }
+    .bubble-seat-1 { border-left-color: var(--seat-1-color); }
+    .bubble-seat-2 { border-left-color: var(--seat-2-color); }
+
+    .bubble-blunder-spotlight {
+      animation: blunderDoubleFlash 1.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      border: 3px solid #ff4757 !important;
+      background: #fff0f3 !important;
+      color: #2f3542 !important;
+    }
+
+    @keyframes blunderDoubleFlash {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.45);
+      }
+      20% {
+        transform: scale(1.15) translateY(-6px);
+        box-shadow: 0 0 45px #eb2f06, 0 0 25px #be2edd;
+        border-color: #eb2f06;
+      }
+      40% {
+        transform: scale(1);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.45);
+      }
+      60% {
+        transform: scale(1.15) translateY(-6px);
+        box-shadow: 0 0 45px #eb2f06, 0 0 25px #be2edd;
+        border-color: #eb2f06;
+      }
+      80% {
+        transform: scale(1.03);
+        box-shadow: 0 0 20px #e056fd;
+      }
+    }
+
+    .blunder-highlight-quote {
+      color: #c0392b;
+      font-weight: 900;
+      font-size: 14.5px;
+      background: rgba(235, 47, 6, 0.12);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border-left: 4px solid #eb2f06;
+      margin-top: 4px;
+      font-style: italic;
+    }
+

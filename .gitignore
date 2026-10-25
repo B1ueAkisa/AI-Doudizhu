@@ -1,0 +1,34 @@
+# ============================================================
+# Git Ignore - 赛博 AI 斗地主竞技场
+# ============================================================
+
+# 敏感密钥配置 (严禁上传任何真实 Key)
+*.env
+api_keys.env
+.env*
+!*.env.example
+
+# 大型二进制视频及临时录像文件 (递归排除所有目录下的视频)
+*.webm
+**/*.webm
+*.mp4
+**/*.mp4
+*.m4a
+**/*.m4a
+videos/test_nav_rec/
+videos/test_rec/
+videos/debug_layout.png
+videos/screenshot_*.png
+
+# Python 缓存与中间文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+gcm-diagnose.log
+
+# 编辑器与操作系统杂项
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

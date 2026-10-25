@@ -1,0 +1,422 @@
+/* ============================================================
+   右侧独立演播台：Gemini 赛后毒舌解说席 (530px 宽大旗舰演播台)
+   ============================================================ */
+    .commentator-studio {
+      width: 530px;
+      flex-shrink: 0;
+      background: #0b101a;
+      border-left: 2px solid #2f3542;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -6px 0 35px rgba(0,0,0,0.7);
+      z-index: 50;
+    }
+
+    .studio-header {
+      padding: 14px 20px;
+      border-bottom: 1.5px solid #2f3542;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #111722;
+    }
+
+    .studio-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffbe76;
+    }
+
+    .live-dot {
+      width: 11px;
+      height: 11px;
+      background: #ff4757;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #ff4757;
+      animation: urgentBlink 1s infinite;
+    }
+
+    @keyframes urgentBlink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+    }
+
+    .studio-step-pill {
+      background: linear-gradient(135deg, #be2edd, #686de0);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+
+    .studio-body {
+      flex: 1;
+      padding: 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* 目标指示卡 */
+    .studio-target-card {
+      background: #141b26;
+      border: 1.5px solid #3742fa;
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    /* ================= 多AI解说嘉宾席切换栏与专属人设 ================= */
+    .commentator-switcher-bar {
+      background: #0d131e;
+      border-bottom: 1.5px solid #232d3d;
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .comm-switcher-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+      font-weight: 900;
+      color: #a4b0be;
+    }
+
+    .comm-count-tag {
+      background: rgba(255, 255, 255, 0.08);
+      color: #74b9ff;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    .comm-pills-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .comm-pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #151d2a;
+      border: 1.5px solid #2f3640;
+      color: #dcdde1;
+      font-size: 12.5px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .comm-pill-btn:hover {
+      border-color: var(--comm-color, #be2edd);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .comm-pill-btn.active {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--comm-color, #be2edd);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(190, 46, 221, 0.4);
+    }
+
+    /* 当前解说员人设卡 & 专属签名 */
+    .comm-profile-card {
+      background: linear-gradient(135deg, rgba(20, 27, 38, 0.95), rgba(13, 17, 24, 0.95));
+      border: 1.5px solid #2f3640;
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+    }
+
+    .comm-profile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .comm-profile-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .comm-profile-avatar {
+      font-size: 24px;
+    }
+
+    .comm-profile-name {
+      font-size: 14.5px;
+      font-weight: 900;
+    }
+
+    .comm-profile-tag {
+      font-size: 11.5px;
+      color: #95afc0;
+      font-weight: 700;
+    }
+
+    .btn-open-review {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: #fff;
+      border: none;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 6px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 12px rgba(243, 156, 18, 0.4);
+      white-space: nowrap;
+    }
+
+    .btn-open-review:hover {
+      filter: brightness(1.15);
+      transform: scale(1.03);
+    }
+
+    .comm-signature-quote {
+      font-size: 12px;
+      color: #ced6e0;
+      font-style: italic;
+      background: rgba(0,0,0,0.35);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border-left: 3px solid var(--gold);
+      line-height: 1.45;
+    }
+
+    .blunder-badge-pill {
+      background: #eb2f06;
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 8px;
+      margin-left: auto;
+      box-shadow: 0 0 10px rgba(235, 47, 6, 0.8);
+      animation: bounceAlert 0.8s infinite alternate;
+    }
+
+    /* 赛后全盘总评弹窗 */
+    .review-modal-card {
+      max-width: 680px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      background: #111722;
+      border: 2px solid var(--gold);
+    }
+
+    .review-verdict-box {
+      background: linear-gradient(135deg, rgba(241, 196, 15, 0.15), rgba(230, 126, 34, 0.08));
+      border: 1.5px solid var(--gold);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+    }
+
+    .review-verdict-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--gold-bright);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .review-rating-badge {
+      font-size: 13px;
+      color: #2ed573;
+      font-weight: 800;
+    }
+
+    .review-awards-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .award-card {
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mvp-card {
+      background: rgba(46, 213, 115, 0.12);
+      border: 1.5px solid #2ed573;
+    }
+
+    .broom-card {
+      background: rgba(235, 47, 6, 0.12);
+      border: 1.5px solid #eb2f06;
+    }
+
+    .award-icon {
+      font-size: 28px;
+    }
+
+    .award-tag {
+      font-size: 11px;
+      font-weight: 800;
+      color: #a4b0be;
+      margin-bottom: 2px;
+    }
+
+    .award-name {
+      font-size: 13px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.35;
+    }
+
+    .review-section {
+      background: #151d2a;
+      border: 1.5px solid #2f3640;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+
+    .review-section-title {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #74b9ff;
+      margin-bottom: 8px;
+    }
+
+    .review-summary-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #f1f2f6;
+      white-space: pre-wrap;
+    }
+
+    .review-signature-row {
+      background: rgba(0,0,0,0.4);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .comm-motto {
+      font-size: 12.5px;
+      color: #ffa502;
+      font-style: italic;
+    }
+
+    .comm-official-sign {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--gold-bright);
+      text-align: right;
+    }
+
+    /* 毒舌点评大卡片 (17.5px 醒目大字体，配打字机光标) */
+    .gemini-roast-card {
+      background: linear-gradient(145deg, #180f26 0%, #0c0816 100%);
+      border: 2.5px solid #be2edd;
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: 0 0 35px rgba(190, 46, 221, 0.35), inset 0 0 20px rgba(190, 46, 221, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .roast-card-title {
+      font-size: 14.5px;
+      font-weight: 900;
+      color: #ffbe76;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .roast-typewriter-box {
+      font-size: 17.5px;
+      font-weight: 700;
+      line-height: 1.8;
+      color: #ffffff;
+      background: rgba(0,0,0,0.55);
+      border-radius: 10px;
+      padding: 14px 16px;
+      border-left: 5px solid #ffbe76;
+      min-height: 95px;
+      position: relative;
+      letter-spacing: 0.5px;
+      word-break: break-word;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .typewriter-cursor {
+      color: var(--purple-border);
+      font-weight: 900;
+      animation: cursorBlink 0.7s infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes cursorBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* 选手大脑真实推演实录 (CoT 切片，并列展示大起底！) */
+    .cot-probe-deck {
+      background: #131924;
+      border: 1.5px solid #2f3640;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cot-probe-header {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #74b9ff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cot-probe-body {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #f1f2f6;
+      background: rgba(0,0,0,0.4);
+      border-radius: 8px;
+      padding: 10px 14px;
+      max-height: 170px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      border-left: 4px solid #3742fa;
+    }

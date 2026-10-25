@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎙️ AI 斗地主 · 赛后复盘演播室</title>
+  <link rel="stylesheet" href="/css/replay.css">
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <!-- 顶部状态栏 -->
+    <header>
+      <div class="brand">
+        <h1>🎙️ AI 斗地主 · 赛后复盘演播室</h1>
+      </div>
+      <div class="match-summary-pill" v-if="gameData">
+        <span style="color:#ffbe76;">【{{ currentLoadedTitle }}】</span>
+        <span>•</span>
+        <template v-if="currentStep >= turns.length">
+          <span>获胜方：<b style="color:#2ed573;">{{ gameData.winner_role || '胜方' }}</b></span>
+          <span>•</span>
+          <span>冠军选手：<b style="color:var(--gold-bright);">{{ gameData.winner || '未知' }}</b></span>
+        </template>
+        <template v-else>
+          <span>战局实况：<b style="color:#74b9ff;">第 {{ currentStep }} / {{ turns.length }} 手</b></span>
+          <span>•</span>
+          <span style="color:#fbc531; font-weight:800;">⚔️ 巅峰激战中</span>
+        </template>
+        <span v-if="hasAudioVoice" style="color:#00f2fe; font-weight:800; margin-left:6px;">🎙️ 粤语原声解说</span>
+        <span v-else style="color:#a0aec0; margin-left:6px;">📝 纯文字复盘</span>
+      </div>
+      <div class="header-btns">
+        <button class="btn-live" style="background: linear-gradient(135deg, #00f2fe, #4facfe); color:#0a1020; font-weight:900;" @click="goToSummary">🏁 赛后终幕总结</button>
+        <a href="/video_showcase.html" target="_blank" class="btn-live" style="background: linear-gradient(135deg, #00f2fe, #4facfe); color:#0a1020; text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-weight:800; border: 1.5px solid #00f2fe;">📺 导播大赏</a>
+        <button class="btn-live" style="background: linear-gradient(135deg, #e056fd, #8e44ad); color:#fff; border: 1.5px solid #ffbe76;" @click="openIntroModal">🎬 节目片头</button>
+        <button :style="isRecording ? 'background:#ff4757; color:#fff;' : 'background:#2ed573; color:#1e272e; font-weight:900;'" @click="toggleScreenRecording">
+          {{ isRecording ? '🛑 停止录制' : '🎥 前台录屏' }}
+        </button>
+        <button class="btn-lib" @click="openLibModal">📂 切换牌谱 (精选解说/原始谱)</button>
+        <button class="btn-live" @click="goToLive">🎮 返回实时竞技台</button>
+        <button style="background:#8e44ad;" @click="exportCurrentRecord">📋 导出当前牌谱</button>
+      </div>
+    </header>
+    <!-- 主界面：电竞演播室双屏对称架构 -->
+    <div class="studio-container">
+      <!-- 左侧：完全对称宽阔的大绿呢牌桌 -->
+      <div class="table-wrapper">
+        <div class="table-felt">
+          <!-- 3张公开底牌 -->
+          <div class="bottom-cards-bar">
+            <span>🃏 3张底牌:</span>
+            <div style="display:flex; gap:6px;">
+              <div
+                v-for="(card, bIdx) in bottomCards"
+                :key="bIdx"
+                class="poker-card card-side"
+                :class="isRed(card) ? 'red' : 'black'"
+                style="width:48px; height:68px; padding:3px 4px;"
+              >
+                <div class="card-top" style="font-size:16px;">{{ getCardRank(card) }}</div>
+                <div class="card-suit" style="font-size:18px;">{{ getCardSuit(card) }}</div>
+              </div>
+            </div>
+          </div>
+          <!-- 顶部中央领牌状态指示 -->
+          <div class="center-trick-badge">
+            {{ trickStatusText }}
+          </div>
+          <!-- 顺时针流向动态环 -->
+          <div class="turn-flow-svg-wrap">
+            <svg width="440" height="280" viewBox="0 0 440 280">
+              <path class="flow-svg-path" d="M 220 250 C 370 250, 420 115, 360 65 C 300 15, 140 15, 80 65 C 20 115, 70 250, 220 250 Z"/>
+              <polygon points="340,70 358,57 355,79" fill="#ffdd59"/>
+              <polygon points="100,70 82,57 85,79" fill="#ffdd59"/>
+              <polygon points="210,242 230,250 210,258" fill="#ffdd59"/>
+            </svg>
+            <div class="flow-label">⟳ 顺时针流向：底部 ➔ 右方 ➔ 左方 ➔ 底部</div>
+          </div>
+          <!-- ================= 席位 2: 左上方 (上家) ================= -->
+          <div class="player-seat-block seat-block-left">
+            <div class="player-card card-seat-2" :class="{ 'active-turn': activeSeat === 2, 'is-landlord': playerSummary[2]?.role === '地主', 'is-peasant': playerSummary[2]?.role === '农民' }">
+              <div class="avatar-wrap">
+                <div class="avatar-svg-box" v-html="getAvatarSvg(playerSummary[2]?.model)"></div>
+                <span class="role-badge" :class="playerSummary[2]?.role === '地主' ? 'role-landlord' : 'role-peasant'">
+                  {{ playerSummary[2]?.role === '地主' ? '👑 大地主' : '🛡️ 农民' }}
+                </span>
+              </div>
+              <div class="player-meta">
+                <div class="player-name">
+                  <span>{{ playerSummary[2]?.model || '加载中' }}</span>
+                  <span class="seat-badge badge-seat-2">左方 · 上家</span>
+                  <span :class="playerSummary[2]?.role === '地主' ? 'role-pill-landlord' : 'role-pill-peasant'">
+                    {{ playerSummary[2]?.role === '地主' ? '👑 敌方地主' : '🛡️ 友方同盟' }}
+                  </span>
+                </div>
+                <div class="card-count-badge">手牌: {{ hands[2]?.length || 0 }} 张</div>
+              </div>
+            </div>
+            <!-- 2行大牌角叠牌区 -->
+            <div class="hand-cascade-wrap">
+              <div
+                v-for="(row, rIdx) in getCascadeRows(hands[2], 8)"
+                :key="rIdx"
+                class="hand-cascade-row"
+              >
+                <div v-for="(card, cIdx) in row" :key="cIdx" class="poker-card card-side" :class="isRed(card) ? 'red' : 'black'" :style="{ zIndex: cIdx + 1 }">
+                  <div class="card-top">{{ getCardRank(card) }}</div><div class="card-suit">{{ getCardSuit(card) }}</div>
+                </div>
+              </div>
+            </div>
+            <!-- 思维链气泡 -->
+            <div class="thinking-bubble-box" v-if="activeSeat === 2">
+              <div class="blunder-comic-tag" v-if="currentTurnBlunder && turnPhase === 'decided'">
+                {{ currentTurnBlunder.tag }}
+              </div>
+              <div class="thinking-bubble bubble-seat-2" :class="{ 'bubble-blunder-spotlight': currentTurnBlunder && turnPhase === 'decided' }">
+                <div v-if="turnPhase === 'thinking'" class="thinking-clock-badge">
+                  ⏳ 正在长考推演中 · 耗时 {{ (currentTurn?.duration_sec || 3.0).toFixed(1) }}s
+                </div>
+                <div v-else-if="currentTurnBlunder" style="color:#eb2f06; font-size:12px; font-weight:900; margin-bottom:3px;">
+                  {{ currentTurnBlunder.title }}
+                </div>
+                <div v-else style="color:#2ed573; font-size:12px; font-weight:900; margin-bottom:3px;">
+                  💡 做出决定：打出【{{ currentTurnActionText }}】
+                </div>
+                <div v-if="currentTurnBlunder && turnPhase === 'decided'" class="blunder-highlight-quote">
+                  “{{ currentTurnBlunder.quote || truncateCoT(currentTurn?.raw_thinking, 80) }}”
+                </div>
+                <div v-else>
+                  {{ truncateCoT(currentTurn?.raw_thinking, 95) || `思考中: 决定出【${currentTurnActionText}】` }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ================= 席位 1: 右上方 (下家) ================= -->
+          <div class="player-seat-block seat-block-right">
+            <div class="player-card card-seat-1" :class="{ 'active-turn': activeSeat === 1, 'is-landlord': playerSummary[1]?.role === '地主', 'is-peasant': playerSummary[1]?.role === '农民' }">
+              <div class="avatar-wrap">
+                <div class="avatar-svg-box" v-html="getAvatarSvg(playerSummary[1]?.model)"></div>
+                <span class="role-badge" :class="playerSummary[1]?.role === '地主' ? 'role-landlord' : 'role-peasant'">
+                  {{ playerSummary[1]?.role === '地主' ? '👑 大地主' : '🛡️ 农民' }}
+                </span>
+              </div>
+              <div class="player-meta">
+                <div class="player-name">
+                  <span>{{ playerSummary[1]?.model || '加载中' }}</span>
+                  <span class="seat-badge badge-seat-1">右方 · 下家</span>
+                  <span :class="playerSummary[1]?.role === '地主' ? 'role-pill-landlord' : 'role-pill-peasant'">
+                    {{ playerSummary[1]?.role === '地主' ? '👑 敌方地主' : '🛡️ 友方同盟' }}
+                  </span>
+                </div>
+                <div class="card-count-badge">手牌: {{ hands[1]?.length || 0 }} 张</div>
+              </div>
+            </div>
+            <!-- 2行大牌角叠牌区 -->
+            <div class="hand-cascade-wrap">
+              <div
+                v-for="(row, rIdx) in getCascadeRows(hands[1], 8)"
+                :key="rIdx"
+                class="hand-cascade-row"
+              >
+                <div v-for="(card, cIdx) in row" :key="cIdx" class="poker-card card-side" :class="isRed(card) ? 'red' : 'black'" :style="{ zIndex: cIdx + 1 }">
+                  <div class="card-top">{{ getCardRank(card) }}</div><div class="card-suit">{{ getCardSuit(card) }}</div>
+                </div>
+              </div>
+            </div>
+            <!-- 右方思维链气泡 -->
+            <div class="thinking-bubble-box" v-if="activeSeat === 1" style="align-items:flex-end;">
+              <div class="blunder-comic-tag" v-if="currentTurnBlunder && turnPhase === 'decided'">
+                {{ currentTurnBlunder.tag }}
+              </div>
+              <div class="thinking-bubble bubble-seat-1" :class="{ 'bubble-blunder-spotlight': currentTurnBlunder && turnPhase === 'decided' }">
+                <div v-if="turnPhase === 'thinking'" class="thinking-clock-badge">
+                  ⏳ 正在长考推演中 · 耗时 {{ (currentTurn?.duration_sec || 3.0).toFixed(1) }}s
+                </div>
+                <div v-else-if="currentTurnBlunder" style="color:#eb2f06; font-size:12px; font-weight:900; margin-bottom:3px;">
+                  {{ currentTurnBlunder.title }}
+                </div>
+                <div v-else style="color:#2ed573; font-size:12px; font-weight:900; margin-bottom:3px;">
+                  💡 做出决定：打出【{{ currentTurnActionText }}】
+                </div>
+                <div v-if="currentTurnBlunder && turnPhase === 'decided'" class="blunder-highlight-quote">
+                  “{{ currentTurnBlunder.quote || truncateCoT(currentTurn?.raw_thinking, 80) }}”
+                </div>
+                <div v-else>
+                  {{ truncateCoT(currentTurn?.raw_thinking, 95) || `思考中: 决定出【${currentTurnActionText}】` }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ================= 席位 0 思维链独立展示区 ================= -->
+          <div class="seat-0-bubble-wrapper" v-if="activeSeat === 0 && currentTurn">
+            <div style="font-size:12px; font-weight:900; color:var(--seat-0-color); margin-bottom:2px; display:flex; align-items:center; gap:6px;">
+              <span>💭 底部主视角{{ turnPhase === 'thinking' ? '长考中' : '已决断' }}</span>
+              <span v-if="currentTurnBlunder && turnPhase === 'decided'" style="color:#eb2f06;">[逻辑警报]</span>
+            </div>
+            <div class="blunder-comic-tag" v-if="currentTurnBlunder && turnPhase === 'decided'">
+              {{ currentTurnBlunder.tag }}
+            </div>
+            <div class="thinking-bubble bubble-seat-0" :class="{ 'bubble-blunder-spotlight': currentTurnBlunder && turnPhase === 'decided' }">
+              <div v-if="turnPhase === 'thinking'" class="thinking-clock-badge">
+                ⏳ 正在长考推演中 · 耗时 {{ (currentTurn?.duration_sec || 3.0).toFixed(1) }}s
+              </div>
+              <div v-else-if="currentTurnBlunder" style="color:#eb2f06; font-size:12px; font-weight:900; margin-bottom:3px;">
+                {{ currentTurnBlunder.title }}
+              </div>
+              <div v-else style="color:#2ed573; font-size:12px; font-weight:900; margin-bottom:3px;">
+                💡 做出决定：打出【{{ currentTurnActionText }}】
+              </div>
+              <div v-if="currentTurnBlunder && turnPhase === 'decided'" class="blunder-highlight-quote">
+                “{{ currentTurnBlunder.quote || truncateCoT(currentTurn?.raw_thinking, 80) }}”
+              </div>
+              <div v-else>
+                {{ truncateCoT(currentTurn?.raw_thinking, 100) || `思考中: 决定出【${currentTurnActionText}】` }}
+              </div>
+            </div>
+          </div>
+          <!-- ================= 席位 0: 底部居中 (主视角) ================= -->
+          <div class="player-seat-block seat-block-bottom">
+            <div class="player-card card-seat-0" :class="{ 'active-turn': activeSeat === 0, 'is-landlord': playerSummary[0]?.role === '地主', 'is-peasant': playerSummary[0]?.role === '农民' }">
+              <div class="avatar-wrap">
+                <div class="avatar-svg-box" v-html="getAvatarSvg(playerSummary[0]?.model)"></div>
+                <span class="role-badge" :class="playerSummary[0]?.role === '地主' ? 'role-landlord' : 'role-peasant'">
+                  {{ playerSummary[0]?.role === '地主' ? '👑 大地主' : '🛡️ 农民' }}
+                </span>
+              </div>
+              <div class="player-meta">
+                <div class="player-name">
+                  <span>{{ playerSummary[0]?.model || '加载中' }}</span>
+                  <span class="seat-badge badge-seat-0">底部 · 主视角</span>
+                  <span :class="playerSummary[0]?.role === '地主' ? 'role-pill-landlord' : 'role-pill-peasant'">
+                    {{ playerSummary[0]?.role === '地主' ? '👑 大地主' : '🛡️ 农民' }}
+                  </span>
+                </div>
+                <div class="card-count-badge">手牌: {{ hands[0]?.length || 0 }} 张</div>
+              </div>
+            </div>
+            <!-- 底部单行超大叠牌 (76px x 110px) -->
+            <div class="hand-cascade-wrap">
+              <div class="hand-cascade-row">
+                <div v-for="(card, cIdx) in hands[0]" :key="cIdx" class="poker-card card-bottom" :class="isRed(card) ? 'red' : 'black'" :style="{ zIndex: cIdx + 1 }">
+                  <div class="card-top">{{ getCardRank(card) }}</div><div class="card-suit">{{ getCardSuit(card) }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ================= 台面公共对战出牌区 ================= -->
+          <!-- 席位 2 (左) 打出的牌 -->
+          <div class="seat-played-zone zone-2" v-if="trickCards[2]">
+            <div class="played-zone-tag tag-seat-2">{{ playerSummary[2]?.model }} 打出：</div>
+            <div v-if="trickCards[2].cards?.length" class="played-cards-row" :class="{ 'cascade-played': trickCards[2].cards.length > 4 }">
+              <div v-for="(card, i) in trickCards[2].cards" :key="'z2-' + trickCards[2].playedStep + '-' + i" class="poker-card card-side" :class="[isRed(card) ? 'red' : 'black', trickCards[2].playedStep === currentStep && turnPhase === 'decided' ? 'throw-card-2' : '']" :style="{ zIndex: i + 1, animationDelay: (i * 0.05) + 's' }">
+                <div class="card-top">{{ getCardRank(card) }}</div><div class="card-suit">{{ getCardSuit(card) }}</div>
+              </div>
+            </div>
+            <div v-else :key="'p2-' + trickCards[2].playedStep" class="pass-stamp" :class="{ 'pass-stamp-anim': trickCards[2].playedStep === currentStep && turnPhase === 'decided' }">不出 (PASS)</div>
+          </div>
+          <!-- 席位 1 (右) 打出的牌 -->
+          <div class="seat-played-zone zone-1" v-if="trickCards[1]">
+            <div class="played-zone-tag tag-seat-1">{{ playerSummary[1]?.model }} 打出：</div>
+            <div v-if="trickCards[1].cards?.length" class="played-cards-row" :class="{ 'cascade-played': trickCards[1].cards.length > 4 }">
+              <div v-for="(card, i) in trickCards[1].cards" :key="'z1-' + trickCards[1].playedStep + '-' + i" class="poker-card card-side" :class="[isRed(card) ? 'red' : 'black', trickCards[1].playedStep === currentStep && turnPhase === 'decided' ? 'throw-card-1' : '']" :style="{ zIndex: i + 1, animationDelay: (i * 0.05) + 's' }">
+                <div class="card-top">{{ getCardRank(card) }}</div><div class="card-suit">{{ getCardSuit(card) }}</div>
+              </div>
+            </div>
+            <div v-else :key="'p1-' + trickCards[1].playedStep" class="pass-stamp" :class="{ 'pass-stamp-anim': trickCards[1].playedStep === currentStep && turnPhase === 'decided' }">不出 (PASS)</div>
+          </div>
+          <!-- 席位 0 (底) 打出的牌 -->
+          <div class="seat-played-zone zone-0" v-if="trickCards[0]">
+            <div class="played-zone-tag tag-seat-0">{{ playerSummary[0]?.model }} 打出：</div>
+            <div v-if="trickCards[0].cards?.length" class="played-cards-row" :class="{ 'cascade-played': trickCards[0].cards.length > 4 }">
+              <div v-for="(card, i) in trickCards[0].cards" :key="'z0-' + trickCards[0].playedStep + '-' + i" class="poker-card card-side" :class="[isRed(card) ? 'red' : 'black', trickCards[0].playedStep === currentStep && turnPhase === 'decided' ? 'throw-card-0' : '']" :style="{ zIndex: i + 1, animationDelay: (i * 0.05) + 's' }">
+                <div class="card-top">{{ getCardRank(card) }}</div><div class="card-suit">{{ getCardSuit(card) }}</div>
+              </div>
+            </div>
+            <div v-else :key="'p0-' + trickCards[0].playedStep" class="pass-stamp" :class="{ 'pass-stamp-anim': trickCards[0].playedStep === currentStep && turnPhase === 'decided' }">不出 (PASS)</div>
+          </div>
+        </div>
+      </div>
+      <!-- 右侧：多AI解说演播台 (530px 宽大独立演播台) -->
+      <aside class="commentator-studio">
+        <div class="studio-header">
+          <div class="studio-brand">
+            <span class="live-dot"></span>
+            <span>🎙️ {{ currentCommentator?.name || 'AI' }} 赛后复盘席</span>
+          </div>
+          <span class="studio-step-pill">{{ currentStep === 0 ? '🏁 开局准备 (0/' + turns.length + ')' : '第 ' + currentStep + ' / ' + turns.length + ' 手' }}</span>
+        </div>
+        <!-- 多AI解说嘉宾席切换栏 -->
+        <div class="commentator-switcher-bar">
+          <div class="comm-switcher-title">
+            <span>🎙️ 切换解说嘉宾席:</span>
+            <span class="comm-count-tag">{{ availableCommentators.length }} 位大模型在场</span>
+          </div>
+          <div class="comm-pills-row">
+            <button
+              v-for="comm in availableCommentators"
+              :key="comm.id"
+              class="comm-pill-btn"
+              :class="{ active: activeCommentatorId === comm.id }"
+              :style="{ '--comm-color': comm.badge_color || '#be2edd' }"
+              @click="switchCommentator(comm.id)"
+            >
+              <span class="comm-pill-icon">{{ comm.icon || '🎙️' }}</span>
+              <span class="comm-pill-name">{{ comm.name }}</span>
+            </button>
+          </div>
+        </div>
+        <div class="studio-body">
+          <!-- 当前解说员人设卡 & 专属签名 -->
+          <div class="comm-profile-card" :style="{ borderColor: currentCommentator?.badge_color || '#be2edd' }">
+            <div class="comm-profile-top">
+              <div class="comm-profile-left">
+                <span class="comm-profile-avatar">{{ currentCommentator?.icon || '🎙️' }}</span>
+                <div>
+                  <div class="comm-profile-name" :style="{ color: currentCommentator?.badge_color || '#ffbe76' }">
+                    {{ currentCommentator?.name || 'AI 解说员' }}
+                  </div>
+                  <div class="comm-profile-tag">{{ currentCommentator?.role_title || '职业解说员' }}</div>
+                </div>
+              </div>
+              <button class="btn-open-review" @click="showReviewModal = true">
+                📋 赛后全盘深度总评
+              </button>
+            </div>
+            <div class="comm-signature-quote">
+              {{ currentCommentator?.signature || '“认真复盘每一手，打牌绝不马虎。”' }}
+            </div>
+          </div>
+          <!-- 目标指示卡 -->
+          <div class="studio-target-card" v-if="currentTurn">
+            <span style="color:#ffbe76;">🎯 靶向解剖: {{ currentTurn.model_name }} ({{ currentTurn.role }})</span>
+            <span :style="{ color: turnPhase === 'thinking' ? '#ffa502' : '#74b9ff' }">
+              {{ turnPhase === 'thinking' ? '⏳ 状态: 深度推演长考中 (' + (currentTurn.duration_sec ? currentTurn.duration_sec.toFixed(1) : '3.0') + 's)' : '👉 动作: ' + currentTurnActionText }}
+            </span>
+          </div>
+          <div class="studio-target-card" v-else-if="gameData">
+            <span style="color:#ffbe76;">🃏 战局状态: 发牌就绪 · 全员满手牌</span>
+            <span style="color:#2ed573;">👑 本局地主: {{ gameData.landlord || '地主' }}</span>
+          </div>
+          <!-- 毒舌点评卡片 (17.5px 醒目大字体，配打字机光标) -->
+          <div class="gemini-roast-card" :style="{ borderColor: currentCommentator?.badge_color || '#be2edd' }">
+            <div class="roast-card-title">
+              <span :style="{ color: currentCommentator?.badge_color || '#ffbe76' }">
+                {{ currentCommentator?.icon }} {{ currentCommentator?.name }} 专属评析
+              </span>
+              <span v-if="currentTurnBlunder" class="blunder-badge-pill">
+                {{ currentTurnBlunder.tag || '🚨 逆天脑回路' }}
+              </span>
+            </div>
+            <div class="roast-typewriter-box">
+              <span>{{ roastDisplayText }}</span>
+              <span class="typewriter-cursor" v-if="isTypewriting">|</span>
+            </div>
+          </div>
+          <!-- 选手真实思维链大起底 (CoT 切片，并列展示！) -->
+          <div class="cot-probe-deck" v-if="currentTurn">
+            <div class="cot-probe-header">
+              <span>🧠 选手大脑实时推演实录 (CoT 切片)</span>
+              <span style="color:var(--gold-bright);">{{ currentTurn.model_name }}</span>
+            </div>
+            <div class="cot-probe-body">
+              {{ currentTurn.raw_thinking || '（无思维链数据）' }}
+            </div>
+          </div>
+        </div>
+        <!-- 底部控制台 -->
+        <div class="playback-console">
+          <div class="console-buttons-row">
+            <button class="replay-btn-sub" @click="prevStep">⏮️ 上一手</button>
+            <button class="replay-btn-main" @click="toggleAutoPlay">
+              {{ isPlaying ? "⏸️ 暂停解说" : "▶️ 自动解说" }}
+            </button>
+            <button class="replay-btn-sub" @click="nextStep">⏭️ 下一手</button>
+            <button class="replay-btn-sub" @click="restart">🔄 重头开始</button>
+            <div style="display:flex; align-items:center; gap:4px; margin-left:6px; background:rgba(255,255,255,0.06); padding:3px 8px; border-radius:8px; border:1px solid rgba(255,255,255,0.12);">
+              <span style="font-size:12px; color:#d8b4fe; font-weight:700;">⚡ 语速:</span>
+              <button class="btn-speed-pill" :class="{ active: speedMultiplier === 0.8 }" @click="setReplaySpeed(0.8)">0.8x</button>
+              <button class="btn-speed-pill" :class="{ active: speedMultiplier === 1.0 }" @click="setReplaySpeed(1.0)">1.0x</button>
+              <button class="btn-speed-pill" :class="{ active: speedMultiplier === 1.25 }" @click="setReplaySpeed(1.25)">1.25x</button>
+              <button class="btn-speed-pill" :class="{ active: speedMultiplier === 1.5 }" @click="setReplaySpeed(1.5)">1.5x</button>
+              <button v-if="hasAudioVoice" class="btn-speed-pill" :style="isVoiceEnabled ? 'background:#00f2fe; color:#060913; font-weight:900;' : 'background:rgba(255,255,255,0.1); color:#a0aec0;'" @click="isVoiceEnabled = !isVoiceEnabled">
+                {{ isVoiceEnabled ? '🎙️ 配音开' : '🔇 静音' }}
+              </button>
+            </div>
+          </div>
+          <input
+            type="range"
+            class="replay-slider"
+            min="0"
+            :max="turns.length || 1"
+            :value="currentStep"
+            @input="onSliderInput"
+          >
+        </div>
+      </aside>
+    </div>
+    <!-- 牌谱库选择弹窗 -->
+    <div class="modal-overlay" v-if="showLibModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>📂 牌谱选择与复盘编制中心</h2>
+          <button @click="showLibModal = false" style="background:#eb4d4b; padding:4px 10px; font-size:12px; border-radius:50%;">✖</button>
+        </div>
+        <div class="lib-tabs">
+          <button class="tab-btn" :class="{ active: currentLibTab === 'commented' }" @click="switchLibTab('commented')">
+            🎙️ 精选已解说牌谱 (Commented)
+          </button>
+          <button class="tab-btn" :class="{ active: currentLibTab === 'raw' }" @click="switchLibTab('raw')">
+            📜 原始实况对局谱 (Raw Games)
+          </button>
+          <label class="tab-btn upload-btn">
+            📁 本地导入 JSON 牌谱
+            <input type="file" accept=".json" style="display:none;" @change="onLocalJsonUpload">
+          </label>
+        </div>
+        <div class="lib-list-container">
+          <div v-if="libRecords.length === 0" style="color:#95afc0; padding:16px; text-align:center;">
+            暂无牌谱文件
+          </div>
+          <div v-for="rec in libRecords" :key="rec.filename" class="record-item-card">
+            <div class="record-info-left">
+              <div class="record-title-row">
+                <span>{{ rec.type === 'commented' ? '🎙️' : '📜' }}</span>
+                <span>{{ rec.title }}</span>
+                <span v-if="rec.has_turn_audio" style="background:rgba(0,242,254,0.2); border:1px solid #00f2fe; color:#00f2fe; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:8px; font-weight:800;">🎙️ 粤语原声配音版</span>
+                <span v-else style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#a0aec0; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:8px;">📝 纯文字复盘</span>
+              </div>
+              <div class="record-meta-row">
+                <span>手数: <b style="color:#74b9ff;">{{ rec.turns_count }} 手</b></span>
+                <span>获胜: <b style="color:#2ed573;">{{ rec.winner }} ({{ rec.winner_role || '胜方' }})</b></span>
+                <span>时间: {{ rec.date }}</span>
+                <span>大小: {{ rec.size_kb }} KB</span>
+              </div>
+            </div>
+            <button class="load-rec-btn" @click="selectRecord(rec)">
+              ▶️ 载入复盘
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 赛后全盘深度总评弹窗 -->
+    <div class="modal-overlay" v-if="showReviewModal" @click.self="showReviewModal = false">
+      <div class="modal-card review-modal-card">
+        <div class="modal-header">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:24px;">{{ currentCommentator?.icon || '🏆' }}</span>
+            <div>
+              <h2 style="margin:0; font-size:18px; color:var(--gold-bright);">
+                【{{ currentCommentator?.name }}】赛后全盘深度战术总评
+              </h2>
+              <span style="font-size:12px; color:#a4b0be;">
+                {{ currentCommentator?.role_title }} · 官方复盘结语
+              </span>
+            </div>
+          </div>
+          <button @click="showReviewModal = false" style="background:#eb4d4b; padding:4px 10px; font-size:12px; border-radius:50%;">✖</button>
+        </div>
+        <div class="review-modal-body" v-if="currentCommentator?.post_match_review">
+          <!-- 大盘总结论 -->
+          <div class="review-verdict-box">
+            <div class="review-verdict-title">
+              {{ currentCommentator.post_match_review.verdict_title }}
+            </div>
+            <div class="review-rating-badge">
+              ⭐ 综合对局评分: <b>{{ currentCommentator.post_match_review.rating }}</b>
+            </div>
+          </div>
+          <!-- MVP 与金扫帚颁奖台 -->
+          <div class="review-awards-row">
+            <div class="award-card mvp-card">
+              <div class="award-icon">🌟</div>
+              <div class="award-content">
+                <div class="award-tag">本局 MVP 选手</div>
+                <div class="award-name">{{ currentCommentator.post_match_review.mvp }}</div>
+              </div>
+            </div>
+            <div class="award-card broom-card">
+              <div class="award-icon">🧹</div>
+              <div class="award-content">
+                <div class="award-tag">饭堂金扫帚奖 (最大翻车战犯)</div>
+                <div class="award-name">{{ currentCommentator.post_match_review.golden_broom }}</div>
+              </div>
+            </div>
+          </div>
+          <!-- 深度战术大盘分析 -->
+          <div class="review-section">
+            <div class="review-section-title">🔍 战术大盘深度剖析与博弈复盘</div>
+            <div class="review-summary-text">
+              {{ currentCommentator.post_match_review.summary_text }}
+            </div>
+          </div>
+          <!-- 解说员官方署名 -->
+          <div class="review-signature-row">
+            <div class="comm-motto">
+              {{ currentCommentator.signature }}
+            </div>
+            <div class="comm-official-sign">
+              {{ currentCommentator.post_match_review.signature }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 🎥 录屏悬浮指示器 -->
+    <div class="screen-record-pill" v-if="isRecording">
+      <div class="rec-live-dot"></div>
+      <span style="font-size:12px; color:#ff7675; font-weight:900;">REC 录制中</span>
+      <span class="rec-timer-text">{{ recordTimerText }}</span>
+      <button class="btn-stop-rec" @click="stopScreenRecording">完成保存</button>
+    </div>
+    <!-- 🎬 视频片头引入与主持人出场动画弹窗 -->
+    <!-- 🏆 赛后终局胜负结算大屏弹窗 (显示胜负与三家已出牌数) -->
+    <div class="settlement-overlay" v-if="showFinishOverlay">
+      <div class="settlement-card">
+        <div class="settlement-trophy">🏆</div>
+        <div class="settlement-title">比赛胜负已分！</div>
+        <div class="settlement-subtitle">
+          获胜方：<b style="color:#2ed573;">【{{ gameData?.winner_role }}】</b>
+          <span style="margin: 0 8px;">•</span>
+          冠军选手：<b style="color:var(--gold-bright);">{{ gameData?.winner }}</b> 率先出完手牌夺冠！
+        </div>
+        <div class="settlement-players-grid">
+          <div
+            v-for="p in settlementStats"
+            :key="p.seat"
+            class="settlement-player-box"
+            :class="{ 'is-winner': p.isWinner, 'is-landlord': p.role === '地主' }"
+          >
+            <div class="sp-badge-row">
+              <span class="sp-role-pill" :class="p.role === '地主' ? 'pill-landlord' : 'pill-peasant'">
+                {{ p.role === '地主' ? '👑 地主' : '🛡️ 农民' }}
+              </span>
+              <span class="sp-result-pill" :class="p.isWinner ? 'res-win' : 'res-loss'">
+                {{ p.isWinner ? '🏆 胜利' : '❌ 战败' }}
+              </span>
+            </div>
+            <div class="sp-name">{{ p.model }}</div>
+            <div class="sp-seat">{{ p.seatName }}</div>
+            <div class="sp-stats-row">
+              <div class="sp-stat-item">
+                <div class="sp-stat-num" style="color:#00f2fe;">{{ p.played }} 张</div>
+                <div class="sp-stat-label">已出牌数</div>
+              </div>
+              <div class="sp-stat-item">
+                <div class="sp-stat-num" :style="{ color: p.remaining === 0 ? '#2ed573' : '#ff7675' }">
+                  {{ p.remaining }} 张
+                </div>
+                <div class="sp-stat-label">{{ p.remaining === 0 ? '手牌清空' : '剩余手牌' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="settlement-footer">
+          <button class="btn-summary-go" @click="goToSummary">
+            🏁 前往终幕总评致谢 ➔ ({{ autoSummaryTimerSec }}s)
+          </button>
+          <button class="btn-replay-again" @click="restart">
+            🔁 重新复盘
+          </button>
+          <button class="btn-close-settle" @click="showFinishOverlay = false">
+            ✖️ 查看牌面
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 外部模块化脚本引入 -->
+  <script src="/vue.global.prod.js"></script>
+  <script src="/js/avatars.js"></script>
+  <script src="/js/replay_utils.js"></script>
+  <script src="/js/screen_recorder.js"></script>
+  <script src="/js/replay_app.js"></script>
+</body>
+</html>

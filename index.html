@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🃏 AI 斗地主竞技台 · 真机检录与全流式思维链</title>
+  <link rel="stylesheet" href="/css/arena.css">
+</head>
+<body>
+
+  <!-- 独立开局大厅 / 选手真机检录弹窗 -->
+  <div class="lobby-modal" id="lobbyModal">
+    <div class="lobby-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="lobby-title" style="margin-bottom:0;">🎯 选手入场检录大厅</div>
+        <button type="button" onclick="window.open('/replay.html', '_blank')" style="background:linear-gradient(135deg, #e056fd, #be2edd); color:#fff; border:1.5px solid #ffbe76; box-shadow:0 0 16px rgba(224,86,253,0.6); font-size:13px; padding:7px 16px; border-radius:20px; font-weight:900; cursor:pointer;">
+          🎬 免检录 · 直接跳往【赛后复盘演播室】
+        </button>
+      </div>
+      <div class="lobby-subtitle">请选择 3 位免费模型参赛选手。点击真机握手，确认网络畅通且听取各模型霸气开场白后入场！若只想复盘往期精彩神仙/傻仔对局，可直接点击右上角跳转！</div>
+
+      <div class="lobby-seats-grid">
+        <!-- 底部视角 -->
+        <div class="lobby-seat-card seat-0-border" style="border: 2px solid var(--seat-0-color); box-shadow: 0 0 16px rgba(9, 132, 227, 0.35);">
+          <div class="lobby-seat-title" style="color:var(--seat-0-color);font-weight:900;">🔵 底部席位 (主视角)</div>
+          <select id="lobbySel0" style="width:100%; padding:6px; font-size:12px;"></select>
+          <div class="handshake-status" id="status0" style="border-left: 3px solid var(--seat-0-color);">
+            <span class="status-pending">等待检录连接...</span>
+          </div>
+        </div>
+
+        <!-- 右侧视角 -->
+        <div class="lobby-seat-card seat-1-border" style="border: 2px solid var(--seat-1-color); box-shadow: 0 0 16px rgba(0, 184, 148, 0.35);">
+          <div class="lobby-seat-title" style="color:var(--seat-1-color);font-weight:900;">🟢 右方席位 (下家)</div>
+          <select id="lobbySel1" style="width:100%; padding:6px; font-size:12px;"></select>
+          <div class="handshake-status" id="status1" style="border-left: 3px solid var(--seat-1-color);">
+            <span class="status-pending">等待检录连接...</span>
+          </div>
+        </div>
+
+        <!-- 左侧视角 -->
+        <div class="lobby-seat-card seat-2-border" style="border: 2px solid var(--seat-2-color); box-shadow: 0 0 16px rgba(225, 112, 85, 0.35);">
+          <div class="lobby-seat-title" style="color:var(--seat-2-color);font-weight:900;">🟠 左方席位 (上家)</div>
+          <select id="lobbySel2" style="width:100%; padding:6px; font-size:12px;"></select>
+          <div class="handshake-status" id="status2" style="border-left: 3px solid var(--seat-2-color);">
+            <span class="status-pending">等待检录连接...</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:center; gap:16px;">
+        <button id="btnHandshake" onclick="runHandshakeCheck()" style="font-size:15px; padding:10px 24px; background:#0984e3;">
+          ⚡ 开始真机握手 & 听取开场白
+        </button>
+        <button id="btnEnterGame" onclick="enterGame()" disabled style="font-size:15px; padding:10px 28px; background:#2ed573;">
+          🔥 全员就绪！正式发牌开战
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 顶部控制栏 -->
+  <header>
+    <div class="brand">
+      <h1>🃏 AI 斗地主竞技台</h1>
+    </div>
+
+    <!-- 当前参赛阵容指示 -->
+    <div class="active-models-pill">
+      <span style="color:var(--gold);">当前对阵:</span>
+      <span style="color:var(--seat-0-color);" id="headerModel0">加载中</span> vs
+      <span style="color:var(--seat-1-color);" id="headerModel1">加载中</span> vs
+      <span style="color:var(--seat-2-color);" id="headerModel2">加载中</span>
+    </div>
+
+    <div class="controls">
+      <button class="lobby-btn" onclick="openLobbyModal()">👥 重选选手</button>
+      <button id="btnNewGame" onclick="startNewGame()">🎮 重新洗牌</button>
+      <button id="btnNextStep" class="secondary" onclick="stepTurn()">▶️ 下一手</button>
+      <button id="btnAuto" class="danger" onclick="toggleAutoPlay()">⚡ 自动对战</button>
+      <button type="button" onclick="window.open('/videos/AI%E6%96%97%E5%9C%B0%E4%B8%BB_%E5%85%A8%E6%98%8E%E6%98%9F%E8%A7%A3%E8%AF%B4%E5%A4%A7%E8%B5%8F_1080P.mp4', '_blank')" style="background:linear-gradient(135deg, #ff4757, #ff6b81); border:1.5px solid #ff6b81; font-weight:800; cursor:pointer;">▶️ 观看 1080P 视频</button>
+      <button id="btnTheater" onclick="openReplayTheater()" style="background:linear-gradient(135deg, #e056fd, #be2edd); border:1.5px solid #ffbe76; box-shadow:0 0 15px rgba(224,86,253,0.5);">🎬 赛后演播室</button>
+      <button onclick="exportForGemini()" style="background:#8e44ad;">📋 导出牌谱</button>
+    </div>
+  </header>
+
+  <!-- 主竞技场 -->
+  <main>
+    <div class="table-container" id="mainTable">
+
+      <div class="bomb-overlay" id="bombOverlay">💣 炸弹！BOOM！</div>
+
+      <!-- 赛后复盘广播条 -->
+      <div class="replay-broadcast-bar" id="replayBroadcastBar" style="display:none;">
+        <span class="live-indicator"></span>
+        <span style="color:#ffbe76;">🔴 GEMINI 赛事复盘演播室</span>
+        <span id="replayTurnTitle" style="color:#f5f6fa;">第 1 手：开局解说</span>
+        <button onclick="closeReplayTheater()" style="background:#eb4d4b; padding:2px 10px; font-size:11px; border-radius:12px; margin-left:10px;">✖️ 退出复盘</button>
+      </div>
+
+      <!-- Gemini 毒舌解说卡片 (复盘模式显示) -->
+      <div class="gemini-commentary-card" id="geminiCommentaryBox" style="display:none;">
+        <div class="commentary-header">
+          <div class="commentary-host-badge">
+            <span class="live-indicator"></span>
+            <span>🎙️ Gemini 裁判·毒舌解说席</span>
+          </div>
+          <div class="replay-step-tag" id="replayStepTag">第 1 / 42 手</div>
+        </div>
+        <div class="commentary-body" id="geminiCommentaryText">
+          点击下方【▶️ 自动解说】或【下一手】，带你重温这盘 42 手经典大逆转！
+        </div>
+        <div class="replay-controls-row">
+          <button class="replay-btn-sub" onclick="prevReplayStep()">⏮️ 上一手</button>
+          <button class="replay-btn-main" id="btnReplayAuto" onclick="toggleReplayAuto()">▶️ 自动解说</button>
+          <button class="replay-btn-sub" onclick="nextReplayStep()">⏭️ 下一手</button>
+          <button class="replay-btn-sub" onclick="restartReplay()">🔄 从头开始</button>
+          <div class="replay-speed-wrap">
+            <span>语速:</span>
+            <select id="replaySpeedSel" class="replay-speed-select">
+              <option value="3800">正常 (3.8s)</option>
+              <option value="2400">快节奏 (2.4s)</option>
+              <option value="5500">细品 (5.5s)</option>
+            </select>
+          </div>
+        </div>
+        <input type="range" class="replay-range-slider" id="replayProgress" min="1" max="42" value="1" oninput="seekReplayStep(this.value)">
+      </div>
+
+      <!-- 顺时针流向动态环与箭头 -->
+      <div class="turn-flow-container">
+        <svg width="440" height="290" viewBox="0 0 440 290">
+          <path class="flow-svg-path" d="M 220 260 C 370 260, 420 120, 360 70 C 300 20, 140 20, 80 70 C 20 120, 70 260, 220 260 Z"/>
+          <polygon points="340,75 358,62 355,84" fill="#ffdd59"/>
+          <polygon points="100,75 82,62 85,84" fill="#ffdd59"/>
+          <polygon points="210,252 230,260 210,268" fill="#ffdd59"/>
+        </svg>
+        <div class="flow-label">⟳ 顺时针流向：底部 ➔ 右方 ➔ 左方 ➔ 底部</div>
+      </div>
+
+      <!-- 底牌展示区 -->
+      <div class="bottom-cards-bar">
+        <span>🃏 3张神秘底牌:</span>
+        <div id="bottomCardsContainer" style="display:flex; gap:10px;"></div>
+      </div>
+
+      <!-- 选手 2: 左上方 (上家) -->
+      <div class="player-pod pod-left" id="pod_2">
+        <div class="thinking-bubble bubble-seat-2" id="bubble_2">思维链思考中...</div>
+        <div class="player-card card-seat-2" id="card_2">
+          <div class="countdown-timer" id="timer_2">⏱️ 15s</div>
+          <div class="avatar-wrap">
+            <img class="avatar" id="avatar_2" src="" alt="avatar">
+            <span class="role-badge role-peasant" id="badge_2">农民</span>
+          </div>
+          <div class="player-meta">
+            <div class="player-name"><span id="name_2">模型加载中</span> <span class="seat-badge badge-seat-2">左方 · 上家</span></div>
+            <div class="card-count-badge" id="count_2">手牌: 17 张</div>
+          </div>
+        </div>
+        <div id="hand_2" style="display:flex; flex-direction:column; gap:4px; margin-top:8px; align-items:flex-start;"></div>
+      </div>
+
+      <!-- 选手 1: 右上方 (下家) -->
+      <div class="player-pod pod-right" id="pod_1">
+        <div class="thinking-bubble bubble-seat-1" id="bubble_1">思维链思考中...</div>
+        <div class="player-card card-seat-1" id="card_1">
+          <div class="countdown-timer" id="timer_1">⏱️ 15s</div>
+          <div class="avatar-wrap">
+            <img class="avatar" id="avatar_1" src="" alt="avatar">
+            <span class="role-badge role-peasant" id="badge_1">农民</span>
+          </div>
+          <div class="player-meta">
+            <div class="player-name"><span id="name_1">模型加载中</span> <span class="seat-badge badge-seat-1">右方 · 下家</span></div>
+            <div class="card-count-badge" id="count_1">手牌: 17 张</div>
+          </div>
+        </div>
+        <div id="hand_1" style="display:flex; flex-direction:column; gap:4px; margin-top:8px; align-items:flex-end;"></div>
+      </div>
+
+      <!-- 牌桌中央：公共出牌区 -->
+      <div class="center-arena" id="centerArena">
+        <div class="center-label" id="centerActionLabel">桌面上家出牌</div>
+        <div class="played-cards-area" id="centerCards">
+          <span style="color:#95afc0;font-size:15px;">等待开局第一手牌...</span>
+        </div>
+      </div>
+
+      <!-- 三家台面出牌区 (每位选手面前专属放置，新一轮自动清空) -->
+      <div class="seat-played-zone zone-2" id="played_zone_2" style="display:none;"></div>
+      <div class="seat-played-zone zone-1" id="played_zone_1" style="display:none;"></div>
+      <div class="seat-played-zone zone-0" id="played_zone_0" style="display:none;"></div>
+
+      <!-- 选手 0: 底部居中 (主视角) -->
+      <div class="player-pod pod-bottom" id="pod_0">
+        <div class="thinking-bubble bubble-seat-0" id="bubble_0">思维链思考中...</div>
+        <div class="player-card card-seat-0" id="card_0" style="max-width:440px;">
+          <div class="countdown-timer" id="timer_0">⏱️ 15s</div>
+          <div class="avatar-wrap">
+            <img class="avatar" id="avatar_0" src="" alt="avatar">
+            <span class="role-badge role-landlord" id="badge_0">地主</span>
+          </div>
+          <div class="player-meta">
+            <div class="player-name"><span id="name_0">模型加载中</span> <span class="seat-badge badge-seat-0">底部 · 主视角</span></div>
+            <div class="card-count-badge" id="count_0">手牌: 20 张</div>
+          </div>
+        </div>
+        <div id="hand_0" style="display:flex; margin-top:8px; justify-content:center; align-items:center;"></div>
+      </div>
+
+    </div>
+
+    <!-- 右侧：全流式思维链与裁决历史栏 (带留色) -->
+    <aside>
+      <div class="aside-header">
+        <span>🧠 真实思维链流式展示 (CoT)</span>
+        <span style="font-size:12px;color:#95afc0;" id="roundCounter">第 1 局</span>
+      </div>
+      <div class="chat-stream" id="logStream"></div>
+    </aside>
+  </main>
+
+  <!-- 结算弹窗 -->
+  <div class="modal-overlay" id="victoryModal">
+    <div class="modal-card">
+      <div class="modal-title" id="modalTitle">🏆 比赛胜负已分！</div>
+      <div class="modal-content" id="modalText"></div>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <button style="font-size:15px; padding:10px 20px;" onclick="startNewGame()">再来一局</button>
+        <button style="font-size:15px; padding:10px 20px; background:linear-gradient(135deg, #e056fd, #be2edd); border:1.5px solid #ffbe76;" onclick="document.getElementById('victoryModal').style.display='none'; openReplayTheater();">🎬 进入毒舌解说复盘</button>
+        <button style="font-size:15px; padding:10px 20px; background:#8e44ad;" onclick="exportForGemini()">📋 导出对局记录</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/arena_effects.js"></script>
+  <script src="/js/arena_lobby.js"></script>
+  <script src="/js/arena_theater.js"></script>
+  <script src="/js/arena_app.js"></script>
+</body>
+</html>
